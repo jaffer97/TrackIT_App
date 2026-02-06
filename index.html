@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TrackIT - Daily Expense Manager</title>
     
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X4FZRTTL1C"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-X4FZRTTL1C');
+    </script>
+    
     <!-- PWA Configuration -->
     <meta name="theme-color" content="#66bb6a">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -224,6 +233,147 @@
             flex: 1;
         }
 
+        /* Login Page Styles */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            color: #66bb6a;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .auth-tab:hover {
+            color: #66bb6a;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .auth-tab.active {
+            color: #66bb6a;
+            border-bottom-color: #66bb6a;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #81c784 0%, #66bb6a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .user-email {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .logout-btn {
+            background: #ff4757;
+            padding: 8px 16px;
+            font-size: 0.9em;
+            width: auto;
+        }
+
+        .logout-btn:hover {
+            background: #ff3838;
+        }
+
         .view-tabs {
             display: flex;
             gap: 10px;
@@ -315,11 +465,77 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1><span style="display: inline-block; background: linear-gradient(135deg, #fff 0%, #a5d6a7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.2em; font-weight: 900; text-shadow: 0 2px 10px rgba(255,255,255,0.3);">₹</span> TrackIT</h1>
-            <p>Track your daily expenses with ease</p>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1><span style="display: inline-block; background: linear-gradient(135deg, #81c784 0%, #66bb6a 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1em; font-weight: 900;">₹</span> TrackIT</h1>
+                <p>Track your expenses, achieve your goals</p>
+            </div>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchAuthTab('login')">Login</button>
+                <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+            </div>
+
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Enter your password">
+                </div>
+                <button type="submit">Login</button>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signupForm" class="auth-form">
+                <div class="form-group">
+                    <label for="signupName">Name</label>
+                    <input type="text" id="signupName" required placeholder="Your name">
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" required placeholder="At least 6 characters" minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="signupPasswordConfirm">Confirm Password</label>
+                    <input type="password" id="signupPasswordConfirm" required placeholder="Re-enter password" minlength="6">
+                </div>
+                <button type="submit">Sign Up</button>
+            </form>
         </div>
+    </div>
+
+    <!-- Main App (hidden until login) -->
+    <div id="mainApp" style="display: none;">
+        <div class="container">
+            <div class="header">
+                <h1><span style="display: inline-block; background: linear-gradient(135deg, #fff 0%, #a5d6a7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.2em; font-weight: 900; text-shadow: 0 2px 10px rgba(255,255,255,0.3);">₹</span> TrackIT</h1>
+                <p>Track your daily expenses with ease</p>
+            </div>
+
+            <!-- User Info Card -->
+            <div class="card">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">User</div>
+                        <div class="user-email" id="userEmail">user@email.com</div>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
 
         <div class="card">
             <h2 style="margin-bottom: 20px;">Add New Expense</h2>
@@ -407,9 +623,188 @@
             </div>
             <div id="expenseList"></div>
         </div>
+        </div>
     </div>
 
     <script>
+        // ===== AUTHENTICATION SYSTEM =====
+        
+        // Check if user is logged in
+        function checkAuth() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                showMainApp(currentUser);
+            } else {
+                showLoginPage();
+            }
+        }
+
+        // Show login page
+        function showLoginPage() {
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('mainApp').style.display = 'none';
+        }
+
+        // Show main app
+        function showMainApp(user) {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            
+            // Update user info
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+            
+            // Track login event in Google Analytics
+            gtag('event', 'login', {
+                method: 'email'
+            });
+        }
+
+        // Switch between login and signup tabs
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const tabs = document.querySelectorAll('.auth-tab');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            if (tab === 'login') {
+                loginForm.classList.add('active');
+                signupForm.classList.remove('active');
+                tabs[0].classList.add('active');
+            } else {
+                signupForm.classList.add('active');
+                loginForm.classList.remove('active');
+                tabs[1].classList.add('active');
+            }
+            
+            hideMessages();
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => errorDiv.style.display = 'none', 5000);
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            setTimeout(() => successDiv.style.display = 'none', 3000);
+        }
+
+        // Hide messages
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        // Login handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            hideMessages();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Get all users
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+            
+            // Check if user exists
+            if (!users[email]) {
+                showError('Account not found. Please sign up first.');
+                return;
+            }
+            
+            // Check password
+            if (users[email].password !== password) {
+                showError('Incorrect password. Please try again.');
+                return;
+            }
+            
+            // Login successful
+            const user = {
+                name: users[email].name,
+                email: email
+            };
+            
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            showMainApp(user);
+            
+            // Reset form
+            this.reset();
+        });
+
+        // Signup handler
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            hideMessages();
+            
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupPasswordConfirm').value;
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                showError('Passwords do not match!');
+                return;
+            }
+            
+            // Get all users
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+            
+            // Check if user already exists
+            if (users[email]) {
+                showError('Account already exists. Please login.');
+                return;
+            }
+            
+            // Create new user
+            users[email] = {
+                name: name,
+                password: password,
+                createdAt: new Date().toISOString()
+            };
+            
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // Track signup event in Google Analytics
+            gtag('event', 'sign_up', {
+                method: 'email'
+            });
+            
+            showSuccess('Account created successfully! Please login.');
+            
+            // Switch to login tab
+            setTimeout(() => {
+                switchAuthTab('login');
+                document.getElementById('loginEmail').value = email;
+            }, 1500);
+            
+            // Reset form
+            this.reset();
+        });
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('currentUser');
+                
+                // Track logout event
+                gtag('event', 'logout');
+                
+                showLoginPage();
+            }
+        }
+
+        // ===== EXPENSE TRACKER CODE =====
+        
         // Initialize expenses from localStorage
         let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
         let customCategories = JSON.parse(localStorage.getItem('customCategories')) || [];
@@ -528,6 +923,12 @@
             expenses.push(expense);
             localStorage.setItem('expenses', JSON.stringify(expenses));
             
+            // Track expense added in Google Analytics
+            gtag('event', 'add_expense', {
+                category: categoryValue,
+                amount: expense.amount
+            });
+            
             // Reset form
             this.reset();
             document.getElementById('date').valueAsDate = new Date();
@@ -544,6 +945,10 @@
             if (confirm('Are you sure you want to delete this expense?')) {
                 expenses = expenses.filter(expense => expense.id !== id);
                 localStorage.setItem('expenses', JSON.stringify(expenses));
+                
+                // Track delete event
+                gtag('event', 'delete_expense');
+                
                 populateMonthFilter();
                 renderExpenses();
                 updateSummary();
@@ -737,6 +1142,11 @@
             a.download = `trackit_expenses_${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
             window.URL.revokeObjectURL(url);
+            
+            // Track download event
+            gtag('event', 'download_csv', {
+                expense_count: filteredExpenses.length
+            });
         }
 
         // Backup to Google Drive
@@ -783,6 +1193,11 @@
                 a.click();
                 window.URL.revokeObjectURL(url);
                 
+                // Track backup event
+                gtag('event', 'backup_google_drive', {
+                    expense_count: filteredExpenses.length
+                });
+                
                 // Optionally open Google Drive in a new tab
                 setTimeout(() => {
                     const openDrive = confirm('Backup downloaded! Would you like to open Google Drive now?');
@@ -809,6 +1224,9 @@
         populateMonthFilter();
         renderExpenses();
         updateSummary();
+
+        // Check authentication status on page load
+        checkAuth();
 
         // Register Service Worker for PWA
         if ('serviceWorker' in navigator) {
